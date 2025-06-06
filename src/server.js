@@ -49,6 +49,8 @@ async function startServer({ port, secretKey, subdomain }) {
       return res.status(400).json({ error: 'Missing commit or patch file' });
     }
 
+    const initialRef = (await git.raw(['rev-parse', '--abbrev-ref', 'HEAD'])).trim();
+
     try {
       console.debug(`Checking out ${commit}`);
       await git.checkout(commit);
@@ -77,6 +79,13 @@ async function startServer({ port, secretKey, subdomain }) {
       res.status(500).json({ error: 'Failed to apply patch', details: err.message });
     } finally {
       console.debug(`Patch file saved at ${patchPath}`);
+      try {
+        console.debug('Resetting repository to HEAD');
+        await git.reset(['--hard', 'HEAD']);
+        await git.checkout(initialRef);
+      } catch (resetErr) {
+        console.error(`Failed to reset repository: ${resetErr.message}`);
+      }
     }
   });
 
