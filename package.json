@@ -21,6 +21,9 @@
   "devDependencies": {
     "jest": "^29.7.0"
   },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
   "bin": {
     "codex-local-bridge": "bin/codex-local-bridge.js"
   }
