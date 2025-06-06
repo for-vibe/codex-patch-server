@@ -31,10 +31,4 @@ The server exposes `POST /apply-patch` expecting form-data with fields:
 
 Provide the secret key in the `X-Secret-Key` header.
 
-## CI/CD
-
-This project uses GitHub Actions to run tests and publish the package to the
-GitHub Package Registry automatically. The workflow triggers on pushes to the
-`main` branch and ensures that the package is always built and released after
-tests succeed.
 
