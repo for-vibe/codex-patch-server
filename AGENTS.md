@@ -27,4 +27,18 @@
 
 ### 📝 Commit Message Format
 
-- Use **conventional commits** format:
+- Use **conventional commits** format.
+
+### 🏆 Patch Workflow Example
+
+1. Create a patch file with `git diff > changes.patch`.
+2. Send the patch to the running server:
+
+```bash
+curl -X POST http://localhost:3030/apply-patch \
+  -H 'X-Secret-Key: <your-key>' \
+  -F commit=<commit-or-branch> \
+  -F patchFile=@changes.patch
+```
+
+Replace `<commit-or-branch>` with the commit hash or branch name to check out before applying the patch.
