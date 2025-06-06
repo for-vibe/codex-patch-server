@@ -5,7 +5,7 @@ A CLI tool that runs a patch application server and exposes it via [localtunnel]
 ## Installation
 
 ```bash
-npm install -g codex-local-bridge
+npm install -g @for-vibe/codex-local-bridge
 ```
 
 ## Usage
