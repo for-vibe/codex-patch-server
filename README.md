@@ -1,6 +1,7 @@
 # Codex Local Bridge
 
-[![Package Version](https://img.shields.io/npm/v/@for-vibe/codex-local-bridge?label=version&registry_uri=https%3A%2F%2Fnpm.pkg.github.com)](https://github.com/orgs/for-vibe/packages/npm/codex-local-bridge)
+[![Package Version](https://img.shields.io/github/package-json/v/for-vibe/codex-local-bridge?label=version)](https://github.com/orgs/for-vibe/packages/npm/codex-local-bridge)
+
 
 A CLI tool that runs a patch application server and exposes it via [localtunnel](https://github.com/localtunnel/localtunnel).
 
