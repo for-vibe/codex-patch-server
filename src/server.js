@@ -57,7 +57,7 @@ async function startServer({ port, secretKey, subdomain }) {
 
       let alreadyApplied = false;
       try {
-        await git.raw(['apply', '--reverse', '--check'], patchContent);
+        await git.raw(['apply', '--reverse', '--check', patchPath]);
         alreadyApplied = true;
       } catch (_) {
         // ignore, patch not applied yet
@@ -69,7 +69,7 @@ async function startServer({ port, secretKey, subdomain }) {
       }
 
       console.debug(`Applying patch ${patchPath}`);
-      await git.raw(['apply', '--whitespace=fix'], patchContent);
+      await git.raw(['apply', '--whitespace=fix', patchPath]);
       console.debug('Patch applied successfully');
       res.json({ success: true, message: `Checked out to ${commit} and patch applied.` });
     } catch (err) {
