@@ -31,4 +31,18 @@ The server exposes `POST /apply-patch` expecting form-data with fields:
 
 Provide the secret key in the `X-Secret-Key` header.
 
+### Example patch request
+
+Generate a patch and send it to the running server:
+
+```bash
+git diff > change.patch
+curl -X POST http://localhost:3030/apply-patch \
+  -H 'X-Secret-Key: myKey' \
+  -F commit=main \
+  -F patchFile=@change.patch
+```
+
+Replace `main` with the commit or branch to check out before applying the patch.
+
 
