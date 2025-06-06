@@ -1,5 +1,5 @@
 {
-  "name": "codex-local-bridge",
+  "name": "@for-vibe/codex-local-bridge",
   "version": "1.0.0",
   "description": "Patch application server with localtunnel and CLI.",
   "main": "src/server.js",
