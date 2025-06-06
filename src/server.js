@@ -14,14 +14,17 @@ const morgan = require('morgan');
  * @param {string} [options.subdomain] Optional localtunnel subdomain.
  */
 async function startServer({ port, secretKey, subdomain }) {
+  console.debug('Starting server', { port, subdomain });
   const app = express();
   app.use(morgan('combined'));
   const upload = multer({ dest: path.join(process.cwd(), 'patches') });
   const git = simpleGit(process.cwd());
 
   app.post('/apply-patch', upload.single('patchFile'), async (req, res) => {
+    console.debug('Received apply-patch request');
     const providedKey = req.headers['x-secret-key'];
     if (providedKey !== secretKey) {
+      console.debug('Rejected request due to invalid secret key');
       return res.status(403).json({ error: 'Forbidden: Invalid secret key' });
     }
 
@@ -29,19 +32,24 @@ async function startServer({ port, secretKey, subdomain }) {
     const patchPath = req.file?.path;
 
     if (!commit || !patchPath) {
+      console.debug('Missing commit or patch file', { commit, patchPath });
       return res.status(400).json({ error: 'Missing commit or patch file' });
     }
 
     try {
+      console.debug(`Checking out ${commit}`);
       await git.checkout(commit);
       const patchContent = fs.readFileSync(patchPath, 'utf-8');
+      console.debug(`Applying patch ${patchPath}`);
       await git.raw(['apply', '--whitespace=fix'], patchContent);
+      console.debug('Patch applied successfully');
       res.json({ success: true, message: `Checked out to ${commit} and patch applied.` });
     } catch (err) {
       console.error(err);
       res.status(500).json({ error: 'Failed to apply patch', details: err.message });
     } finally {
       fs.unlink(patchPath, () => {});
+      console.debug(`Deleted temporary patch file ${patchPath}`);
     }
   });
 
