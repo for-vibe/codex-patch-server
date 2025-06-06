@@ -54,6 +54,20 @@ async function startServer({ port, secretKey, subdomain }) {
       await git.checkout(commit);
       const patchContent = fs.readFileSync(patchPath, 'utf-8');
       console.debug('Patch content:\n' + patchContent);
+
+      let alreadyApplied = false;
+      try {
+        await git.raw(['apply', '--reverse', '--check'], patchContent);
+        alreadyApplied = true;
+      } catch (_) {
+        // ignore, patch not applied yet
+      }
+
+      if (alreadyApplied) {
+        console.debug('Patch already applied, skipping');
+        return res.json({ success: true, message: 'Patch already applied. Skipped.' });
+      }
+
       console.debug(`Applying patch ${patchPath}`);
       await git.raw(['apply', '--whitespace=fix'], patchContent);
       console.debug('Patch applied successfully');
