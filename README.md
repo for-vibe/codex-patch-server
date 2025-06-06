@@ -48,4 +48,7 @@ curl -X POST http://localhost:3030/apply-patch \
 
 Replace `main` with the commit or branch to check out before applying the patch.
 
+After the patch has been processed, the repository is reset to `HEAD` so no
+changes remain in the working directory.
+
 
