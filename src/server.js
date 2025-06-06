@@ -4,6 +4,7 @@ const simpleGit = require('simple-git');
 const fs = require('fs');
 const path = require('path');
 const localtunnel = require('localtunnel');
+const morgan = require('morgan');
 
 /**
  * Starts the patch application server.
@@ -14,6 +15,7 @@ const localtunnel = require('localtunnel');
  */
 async function startServer({ port, secretKey, subdomain }) {
   const app = express();
+  app.use(morgan('combined'));
   const upload = multer({ dest: path.join(process.cwd(), 'patches') });
   const git = simpleGit(process.cwd());
 
