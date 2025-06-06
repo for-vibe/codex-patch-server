@@ -17,7 +17,20 @@ async function startServer({ port, secretKey, subdomain }) {
   console.debug('Starting server', { port, subdomain });
   const app = express();
   app.use(morgan('combined'));
-  const upload = multer({ dest: path.join(process.cwd(), 'patches') });
+  const patchesDir = path.join(process.cwd(), 'patches');
+  const storage = multer.diskStorage({
+    destination(req, file, cb) {
+      fs.mkdirSync(patchesDir, { recursive: true });
+      cb(null, patchesDir);
+    },
+    filename(req, file, cb) {
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+      const ext = path.extname(file.originalname) || '.patch';
+      const base = path.basename(file.originalname, ext);
+      cb(null, `${base}-${timestamp}${ext}`);
+    }
+  });
+  const upload = multer({ storage });
   const git = simpleGit(process.cwd());
 
   app.post('/apply-patch', upload.single('patchFile'), async (req, res) => {
@@ -40,6 +53,7 @@ async function startServer({ port, secretKey, subdomain }) {
       console.debug(`Checking out ${commit}`);
       await git.checkout(commit);
       const patchContent = fs.readFileSync(patchPath, 'utf-8');
+      console.debug('Patch content:\n' + patchContent);
       console.debug(`Applying patch ${patchPath}`);
       await git.raw(['apply', '--whitespace=fix'], patchContent);
       console.debug('Patch applied successfully');
@@ -48,8 +62,7 @@ async function startServer({ port, secretKey, subdomain }) {
       console.error(err);
       res.status(500).json({ error: 'Failed to apply patch', details: err.message });
     } finally {
-      fs.unlink(patchPath, () => {});
-      console.debug(`Deleted temporary patch file ${patchPath}`);
+      console.debug(`Patch file saved at ${patchPath}`);
     }
   });
 
